@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use arc_swap::ArcSwap;
-use muda::{AboutDialog, PredefinedMenuItemKind};
+use muda::AboutDialog;
 
 use super::tray::Tray;
 
@@ -11,9 +11,10 @@ pub fn muda_to_ksni_menu_item(
     match &**item.load() {
         muda::CompatMenuItem::Standard(menu_item) => {
             let id = menu_item.id.clone();
-            match &menu_item.predefined_menu_item_kind {
-                Some(PredefinedMenuItemKind::About(Some(metadata))) => {
-                    let about_dialog = AboutDialog::new(metadata.clone());
+            // Check if this is an "about" menu item with metadata
+            if menu_item.predefined_item_id.as_deref() == Some("about") {
+                if let Some(ref about_metadata) = menu_item.about_metadata {
+                    let about_dialog = AboutDialog::from_compat(about_metadata);
                     ksni::menu::StandardItem {
                         label: menu_item.label.clone(),
                         enabled: menu_item.enabled,
@@ -24,15 +25,27 @@ pub fn muda_to_ksni_menu_item(
                         ..Default::default()
                     }
                     .into()
+                } else {
+                    // About without metadata - just send event
+                    ksni::menu::StandardItem {
+                        label: menu_item.label.clone(),
+                        enabled: menu_item.enabled,
+                        icon_data: menu_item.icon.clone().unwrap_or_default(),
+                        activate: Box::new(move |_| send_menu_event(&id)),
+                        ..Default::default()
+                    }
+                    .into()
                 }
-                _ => ksni::menu::StandardItem {
+            } else {
+                // Regular menu item
+                ksni::menu::StandardItem {
                     label: menu_item.label.clone(),
                     enabled: menu_item.enabled,
                     icon_data: menu_item.icon.clone().unwrap_or_default(),
                     activate: Box::new(move |_| send_menu_event(&id)),
                     ..Default::default()
                 }
-                .into(),
+                .into()
             }
         }
         muda::CompatMenuItem::Checkmark(check_menu_item) => {
