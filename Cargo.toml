@@ -10,11 +10,12 @@ categories = ["gui"]
 rust-version = "1.83"
 
 [features]
-default = ["libxdo"]
+default = ["libxdo", "linux-ksni"]
 serde = ["muda/serde", "dep:serde"]
 common-controls-v6 = ["muda/common-controls-v6"]
 libxdo = ["muda/libxdo"]
 linux-ksni = ["dep:ksni", "dep:arc-swap", "muda/linux-ksni"]
+appindicator = ["dep:libappindicator"]  # GTK3 legacy fallback
 
 [dependencies]
 muda = { version = "0.17.1", default-features = false }
@@ -34,7 +35,7 @@ features = [
 ]
 
 [target."cfg(target_os = \"linux\")".dependencies]
-libappindicator = "0.9"
+libappindicator = { version = "0.9", optional = true }
 arc-swap = { version = "1.7.1", optional = true }
 ksni = { version = "0.2.2", optional = true }
 dirs = "6"
