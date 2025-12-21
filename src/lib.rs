@@ -174,8 +174,8 @@ pub struct TrayIconAttributes {
     /// ## Platform-specific:
     ///
     /// - **Linux:** Sometimes the icon won't be visible unless a menu is set.
-    ///     Setting an empty [`Menu`](crate::menu::Menu) is enough.
-    ///     Works with feature `linux-ksni`.
+    ///   Setting an empty [`Menu`](crate::menu::Menu) is enough.
+    ///   Works with feature `linux-ksni`.
     pub icon: Option<Icon>,
 
     /// Tray icon temp dir path. **Linux only**.
@@ -185,7 +185,11 @@ pub struct TrayIconAttributes {
     /// Use the icon as a [template](https://developer.apple.com/documentation/appkit/nsimage/1520017-template?language=objc). **macOS only**.
     pub icon_is_template: bool,
 
-    /// Whether to show the tray menu on left click or not, default is `true`. **macOS & Windows only**.
+    /// Whether to show the tray menu on left click or not, default is `true`.
+    ///
+    /// ## Platform-specific:
+    ///
+    /// - **Linux:** Unsupported.
     pub menu_on_left_click: bool,
 
     /// Tray icon title.
@@ -230,7 +234,7 @@ impl TrayIconBuilder {
     /// See [`TrayIcon::new`] for more info.
     pub fn new() -> Self {
         Self {
-            id: TrayIconId(COUNTER.next().to_string()),
+            id: TrayIconId::new_unique(),
             attrs: TrayIconAttributes::default(),
         }
     }
@@ -301,7 +305,11 @@ impl TrayIconBuilder {
         self
     }
 
-    /// Whether to show the tray menu on left click or not, default is `true`. **macOS only**.
+    /// Whether to show the tray menu on left click or not, default is `true`.
+    ///
+    /// ## Platform-specific:
+    ///
+    /// - **Linux:** Unsupported.
     pub fn with_menu_on_left_click(mut self, enable: bool) -> Self {
         self.attrs.menu_on_left_click = enable;
         self
@@ -331,7 +339,7 @@ pub struct TrayIcon {
 impl TrayIcon {
     /// Builds and adds a new tray icon to the system tray.
     pub fn new(attrs: TrayIconAttributes) -> Result<Self> {
-        let id = TrayIconId(COUNTER.next().to_string());
+        let id = TrayIconId::new_unique();
         Ok(Self {
             tray: Rc::new(RefCell::new(platform_impl::TrayIcon::new(
                 id.clone(),
@@ -456,6 +464,32 @@ impl TrayIcon {
     pub fn rect(&self) -> Option<Rect> {
         self.tray.borrow().rect()
     }
+
+    /// Get the tray icon's underlying [window handle](windows_sys::Win32::Foundation::HWND) **Windows only**.
+    ///
+    /// This window handle is valid as long as the tray icon.
+    #[cfg(windows)]
+    pub fn window_handle(&self) -> windows_sys::Win32::Foundation::HWND {
+        self.tray.borrow().hwnd()
+    }
+
+    /// Get the tray icon's underlying [NSStatusItem](objc2_app_kit::NSStatusItem) **macOS only**.
+    ///
+    /// Returns `None` if the status item is not available.
+    #[cfg(target_os = "macos")]
+    pub fn ns_status_item(&self) -> Option<objc2::rc::Retained<objc2_app_kit::NSStatusItem>> {
+        self.tray.borrow().ns_status_item().cloned()
+    }
+
+    /// Get the tray icon's underlying [AppIndicator](libappindicator::AppIndicator) **Linux only**.
+    ///
+    /// # Safety
+    ///
+    /// The returned pointer is valid as long as the `TrayIcon` is.
+    #[cfg(all(unix, not(target_os = "macos")))]
+    pub unsafe fn app_indicator(&self) -> *const libappindicator::AppIndicator {
+        self.tray.borrow().app_indicator() as *const _
+    }
 }
 
 /// Describes a tray icon event.
@@ -527,30 +561,22 @@ pub enum TrayIconEvent {
 /// Describes the mouse button state.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[derive(Default)]
 pub enum MouseButtonState {
+    #[default]
     Up,
     Down,
-}
-
-impl Default for MouseButtonState {
-    fn default() -> Self {
-        Self::Up
-    }
 }
 
 /// Describes which mouse button triggered the event..
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[derive(Default)]
 pub enum MouseButton {
+    #[default]
     Left,
     Right,
     Middle,
-}
-
-impl Default for MouseButton {
-    fn default() -> Self {
-        Self::Left
-    }
 }
 
 /// Describes a rectangle including position (x - y axis) and size.

@@ -126,7 +126,9 @@ impl TrayIcon {
             let hicon = attrs.icon.as_ref().map(|i| i.inner.as_raw_handle());
 
             if !register_tray_icon(hwnd, internal_id, &hicon, &attrs.tooltip) {
-                return Err(crate::Error::OsError(std::io::Error::last_os_error()));
+                let result = Err(crate::Error::OsError(std::io::Error::last_os_error()));
+                DestroyWindow(hwnd);
+                return result;
             }
 
             if let Some(menu) = &attrs.menu {
@@ -256,6 +258,10 @@ impl TrayIcon {
 
     pub fn rect(&self) -> Option<Rect> {
         get_tray_rect(self.internal_id, self.hwnd).map(Into::into)
+    }
+
+    pub fn hwnd(&self) -> HWND {
+        self.hwnd
     }
 }
 

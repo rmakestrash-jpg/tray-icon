@@ -1,5 +1,36 @@
 # Changelog
 
+## \[0.21.2]
+
+- [`c9f0d21`](https://www.github.com/tauri-apps/tray-icon/commit/c9f0d2108202b3743efb7696a334759b403b9856) ([#278](https://www.github.com/tauri-apps/tray-icon/pull/278) by [@aarol](https://www.github.com/tauri-apps/tray-icon/../../aarol)) Fix infinite loops when printing the full error chain (for example "{err:?}" with anyhow) for `BadIcon`
+- [`4bbabba`](https://www.github.com/tauri-apps/tray-icon/commit/4bbabba49cd82e7eb8b5f58cfdfe2b00812517af) ([#277](https://www.github.com/tauri-apps/tray-icon/pull/277) by [@ancwrd1](https://www.github.com/tauri-apps/tray-icon/../../ancwrd1)) Fix a problem on Windows platform where the created window was not destroyed correctly in case the tray icon creation fails.
+- [`343599f`](https://www.github.com/tauri-apps/tray-icon/commit/343599f27fb59bf393793140a09511f1331aeda6) ([#284](https://www.github.com/tauri-apps/tray-icon/pull/284) by [@FabianLars](https://www.github.com/tauri-apps/tray-icon/../../FabianLars)) This hotfix reverts https://github.com/tauri-apps/tray-icon/pull/268 because it caused `assertion failed: flush_paint_messages` panics.
+
+## \[0.21.1]
+
+- [`1470763`](https://www.github.com/tauri-apps/tray-icon/commit/147076368596bac8626f51d70563ce3a1b048cfb) ([#272](https://www.github.com/tauri-apps/tray-icon/pull/272) by [@ahonn](https://www.github.com/tauri-apps/tray-icon/../../ahonn)) Add platform specific methods to access the underlying native handles of the tray (similar to `TrayIcon::window_handle`):
+
+  - `TrayIcon::ns_status_item` for macOS
+  - `TrayIcon::app_indicator` for Linux.
+- [`2a6a19b`](https://www.github.com/tauri-apps/tray-icon/commit/2a6a19bbac9848d3887b12599b2860ba6653c8f7) ([#268](https://www.github.com/tauri-apps/tray-icon/pull/268) by [@iKineticate](https://www.github.com/tauri-apps/tray-icon/../../iKineticate)) On Windows, fix tray menu freeze on device change events
+
+## \[0.21.0]
+
+- [`986007b`](https://www.github.com/tauri-apps/tray-icon/commit/986007b4113f3050d65b6fd1bb43d2bd4b97dcc1) ([#263](https://www.github.com/tauri-apps/tray-icon/pull/263) by [@renovate](https://www.github.com/tauri-apps/tray-icon/../../renovate)) Updated `muda` to `0.17`.
+
+## \[0.20.1]
+
+- [`47fc3f3`](https://www.github.com/tauri-apps/tray-icon/commit/47fc3f3ef8ad9a60476d6cf7b5eaa87c621c380a) ([#248](https://www.github.com/tauri-apps/tray-icon/pull/248) by [@aschey](https://www.github.com/tauri-apps/tray-icon/../../aschey)) Add `window_handle` method to retrieve the underlying `hwnd` on Windows
+- [`1f28d6f`](https://www.github.com/tauri-apps/tray-icon/commit/1f28d6fc6bc52dfcea0358bae17d9119ec99c4b6) ([#241](https://www.github.com/tauri-apps/tray-icon/pull/241) by [@Legend-Master](https://www.github.com/tauri-apps/tray-icon/../../Legend-Master)) Correct `with_menu_on_left_click`'s docs to include window support
+
+## \[0.20.0]
+
+- [`e94976b`](https://www.github.com/tauri-apps/tray-icon/commit/e94976bb48bbe97ac5ab215c6da7c7ca746a5c8a) ([#237](https://www.github.com/tauri-apps/tray-icon/pull/237) by [@renovate](https://www.github.com/tauri-apps/tray-icon/../../renovate)) Updated `muda` to 0.16.0
+
+## \[0.19.3]
+
+- [`d6fee6f`](https://www.github.com/tauri-apps/tray-icon/commit/d6fee6ff627e6ff08bf8bf9a2880197d0f07271e) ([#226](https://www.github.com/tauri-apps/tray-icon/pull/226) by [@madsmtm](https://www.github.com/tauri-apps/tray-icon/../../madsmtm)) Update `objc2` to v0.6.
+
 ## \[0.19.2]
 
 - [`1f0e1f8`](https://www.github.com/tauri-apps/tray-icon/commit/1f0e1f8f0d0ad65cd0ab549655fac26c0f524de6) ([#204](https://www.github.com/tauri-apps/tray-icon/pull/204) by [@mrexox](https://www.github.com/tauri-apps/tray-icon/../../mrexox)) Add `set_icon_with_as_template` method to update icon and `is_template` property, preventing glitchy effects during icon animation on macOS.
@@ -197,7 +228,7 @@
 - [`dd63ef3`](https://www.github.com/tauri-apps/tray-icon/commit/dd63ef3b68c35fc8b8fbc1d59975d8826420ae51) Add `TrayIconEvent::id` method.
 - [`3901519`](https://www.github.com/tauri-apps/tray-icon/commit/3901519a48f76b57174b36ce36c7f803dbfb5536) Update to `muda@0.7`
 - [`13d448a`](https://www.github.com/tauri-apps/tray-icon/commit/13d448a9ee7c013f0cc13391ea498da93e806551)([#55](https://www.github.com/tauri-apps/tray-icon/pull/55)) Implement `Clone` for `TrayIcon`.
-- [`13d448a`](https://www.github.com/tauri-apps/tray-icon/commit/13d448a9ee7c013f0cc13391ea498da93e806551)([#55](https://www.github.com/tauri-apps/tray-icon/pull/55)) -   **Breaking change**: `TrayEvent` has been renamed to `TrayIconEvent` for consistency with other struct names.
+- [`13d448a`](https://www.github.com/tauri-apps/tray-icon/commit/13d448a9ee7c013f0cc13391ea498da93e806551)([#55](https://www.github.com/tauri-apps/tray-icon/pull/55)) - **Breaking change**: `TrayEvent` has been renamed to `TrayIconEvent` for consistency with other struct names.
   - **Breaking change**: `ClickEvent` enum has been renamed to `ClickType` and `TrayEvent`'s `event` field has been renamed to `click_type`
 - [`d8d6082`](https://www.github.com/tauri-apps/tray-icon/commit/d8d6082c73b1fa6047ead13d228cf7de1ad0d71c)([#57](https://www.github.com/tauri-apps/tray-icon/pull/57)) Add `TrayIcon::with_id` and `TrayIconBuilder::with_id` to create the tray icon with specified id.
 
