@@ -481,12 +481,14 @@ impl TrayIcon {
         self.tray.borrow().ns_status_item().cloned()
     }
 
-    /// Get the tray icon's underlying [AppIndicator](libappindicator::AppIndicator) **Linux only**.
+    /// Get the tray icon's underlying [AppIndicator](libappindicator::AppIndicator).
+    ///
+    /// **Linux only** - requires the `appindicator` feature and must not have `linux-ksni` enabled.
     ///
     /// # Safety
     ///
     /// The returned pointer is valid as long as the `TrayIcon` is.
-    #[cfg(all(unix, not(target_os = "macos")))]
+    #[cfg(all(target_os = "linux", feature = "appindicator", not(feature = "linux-ksni")))]
     pub unsafe fn app_indicator(&self) -> *const libappindicator::AppIndicator {
         self.tray.borrow().app_indicator() as *const _
     }
