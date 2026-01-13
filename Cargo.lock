@@ -4170,7 +4170,7 @@ dependencies = [
 
 [[package]]
 name = "tray-icon"
-version = "0.21.2"
+version = "0.21.3"
 dependencies = [
  "arc-swap",
  "crossbeam-channel",
